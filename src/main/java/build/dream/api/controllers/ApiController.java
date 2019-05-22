@@ -22,7 +22,7 @@ import java.util.Map;
 public class ApiController {
     private static final String PLATFORM_PRIVATE_KEY = ConfigurationUtils.getConfiguration(Constants.PLATFORM_PRIVATE_KEY);
 
-    @RequestMapping(value = "/v1", method = {RequestMethod.GET, RequestMethod.POST}, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    @RequestMapping(value = "/v1", method = {RequestMethod.POST}, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     @ResponseBody
     public String v1() {
         ApiRest apiRest = null;
