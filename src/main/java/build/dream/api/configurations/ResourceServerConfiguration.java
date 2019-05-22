@@ -2,6 +2,7 @@ package build.dream.api.configurations;
 
 import build.dream.api.constants.Constants;
 import build.dream.api.matchers.MethodRequestMatcher;
+import build.dream.api.security.AccessDeniedHandler;
 import build.dream.api.security.ApiFilterInvocationSecurityMetadataSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -15,6 +16,7 @@ import org.springframework.security.oauth2.config.annotation.web.configuration.R
 import org.springframework.security.oauth2.config.annotation.web.configurers.ResourceServerSecurityConfigurer;
 import org.springframework.security.oauth2.provider.token.TokenStore;
 import org.springframework.security.oauth2.provider.token.store.redis.RedisTokenStore;
+import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.util.matcher.AnyRequestMatcher;
 import org.springframework.security.web.util.matcher.RequestMatcher;
 
@@ -29,11 +31,17 @@ import java.util.List;
 public class ResourceServerConfiguration extends ResourceServerConfigurerAdapter {
     @Autowired
     private RedisConnectionFactory redisConnectionFactory;
+    @Autowired
+    private AuthenticationEntryPoint authenticationEntryPoint;
+    @Autowired
+    private AccessDeniedHandler accessDeniedHandler;
 
     @Override
-    public void configure(ResourceServerSecurityConfigurer resources) throws Exception {
+    public void configure(ResourceServerSecurityConfigurer resources) {
         resources.resourceId("api");
         resources.tokenStore(tokenStore());
+        resources.authenticationEntryPoint(authenticationEntryPoint);
+        resources.accessDeniedHandler(accessDeniedHandler);
     }
 
     @Override
