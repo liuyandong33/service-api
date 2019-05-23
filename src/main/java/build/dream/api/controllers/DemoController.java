@@ -1,8 +1,12 @@
 package build.dream.api.controllers;
 
+import build.dream.api.mappers.CommonMapper;
+import build.dream.api.mappers.UniversalMapper;
 import build.dream.common.saas.domains.OauthClientDetail;
 import build.dream.common.utils.GsonUtils;
+import build.dream.common.utils.UniversalDatabaseHelper;
 import org.apache.ibatis.io.Resources;
+import org.apache.ibatis.session.Configuration;
 import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.apache.ibatis.session.SqlSessionFactoryBuilder;
@@ -12,12 +16,10 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.math.BigInteger;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.List;
 
 @Controller
 @RequestMapping(value = "/demo")
@@ -40,10 +42,15 @@ public class DemoController {
         Connection connection = DriverManager.getConnection("jdbc:mysql://leopard:8066/saas-db?serverTimezone=GMT%2B8&useSSL=true", "root", "root");
         SqlSession sqlSession = sqlSessionFactory.openSession(connection);
 
-        Map<String, Object> map = new HashMap<String, Object>();
-        map.put("id", BigInteger.ONE);
+        Configuration configuration = sqlSessionFactory.getConfiguration();
+        configuration.addMapper(UniversalMapper.class);
+        configuration.addMapper(CommonMapper.class);
 
-        OauthClientDetail oauthClientDetail = sqlSession.selectOne("build.dream.api.mappers.RoleMapper.find", map);
-        return GsonUtils.toJson(oauthClientDetail);
+        UniversalMapper universalMapper = sqlSession.getMapper(UniversalMapper.class);
+
+        List<OauthClientDetail> oauthClientDetails = UniversalDatabaseHelper.findAll(universalMapper, OauthClientDetail.class);
+        int a = 100;
+
+        return GsonUtils.toJson(oauthClientDetails);
     }
 }

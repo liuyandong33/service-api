@@ -11,8 +11,4 @@
         <setting name="mapUnderscoreToCamelCase" value="true"></setting>
         <setting name="callSettersOnNulls" value="true"></setting>
     </settings>
-
-    <mappers>
-        <mapper resource="build/dream/api/mappers/RoleMapper.xml"></mapper>
-    </mappers>
 </configuration>
