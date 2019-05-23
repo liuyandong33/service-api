@@ -39,6 +39,13 @@
     </sql>
 
     <sql id="paginationSql">
-        LIMIT #{offset}, #{maxResults}
+        <choose>
+            <when test="@org.apache.commons.lang.StringUtils@equalsIgnoreCase(databaseProvider, 'MYSQL')">
+                LIMIT #{offset}, #{maxResults}
+            </when>
+            <when test="@org.apache.commons.lang.StringUtils@equalsIgnoreCase(databaseProvider, 'SQLSERVER')">
+                OFFSET #{offset} ROWS FETCH NEXT #{maxResults} ROWS ONLY
+            </when>
+        </choose>
     </sql>
 </mapper>
