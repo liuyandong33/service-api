@@ -2,7 +2,7 @@ package build.dream.api.security;
 
 import build.dream.api.constants.Constants;
 import build.dream.common.api.ApiRest;
-import build.dream.common.constants.ErrorCodeConstants;
+import build.dream.common.constants.ErrorConstants;
 import build.dream.common.exceptions.Error;
 import build.dream.common.utils.ConfigurationUtils;
 import build.dream.common.utils.GsonUtils;
@@ -41,32 +41,32 @@ public class AuthenticationEntryPoint implements org.springframework.security.we
 
     public String translateErrorCode(String errorCode) {
         switch (errorCode) {
-            case ErrorCodeConstants.INVALID_REQUEST:
-                return ErrorCodeConstants.ERROR_CODE_INVALID_REQUEST;
-            case ErrorCodeConstants.INVALID_CLIENT:
-                return ErrorCodeConstants.ERROR_CODE_INVALID_CLIENT;
-            case ErrorCodeConstants.INVALID_GRANT:
-                return ErrorCodeConstants.ERROR_CODE_INVALID_GRANT;
-            case ErrorCodeConstants.UNAUTHORIZED_CLIENT:
-                return ErrorCodeConstants.ERROR_CODE_UNAUTHORIZED_CLIENT;
-            case ErrorCodeConstants.UNSUPPORTED_GRANT_TYPE:
-                return ErrorCodeConstants.ERROR_CODE_UNSUPPORTED_GRANT_TYPE;
-            case ErrorCodeConstants.INVALID_SCOPE:
-                return ErrorCodeConstants.ERROR_CODE_INVALID_SCOPE;
-            case ErrorCodeConstants.INSUFFICIENT_SCOPE:
-                return ErrorCodeConstants.ERROR_CODE_INSUFFICIENT_SCOPE;
-            case ErrorCodeConstants.INVALID_TOKEN:
-                return ErrorCodeConstants.ERROR_CODE_INVALID_TOKEN;
-            case ErrorCodeConstants.REDIRECT_URI_MISMATCH:
-                return ErrorCodeConstants.ERROR_CODE_REDIRECT_URI_MISMATCH;
-            case ErrorCodeConstants.UNSUPPORTED_RESPONSE_TYPE:
-                return ErrorCodeConstants.ERROR_CODE_UNSUPPORTED_RESPONSE_TYPE;
-            case ErrorCodeConstants.ACCESS_DENIED:
-                return ErrorCodeConstants.ERROR_CODE_ACCESS_DENIED;
-            case ErrorCodeConstants.UNAUTHORIZED:
-                return ErrorCodeConstants.ERROR_CODE_UNAUTHORIZED;
+            case ErrorConstants.INVALID_REQUEST:
+                return ErrorConstants.ERROR_CODE_INVALID_REQUEST;
+            case ErrorConstants.INVALID_CLIENT:
+                return ErrorConstants.ERROR_CODE_INVALID_CLIENT;
+            case ErrorConstants.INVALID_GRANT:
+                return ErrorConstants.ERROR_CODE_INVALID_GRANT;
+            case ErrorConstants.UNAUTHORIZED_CLIENT:
+                return ErrorConstants.ERROR_CODE_UNAUTHORIZED_CLIENT;
+            case ErrorConstants.UNSUPPORTED_GRANT_TYPE:
+                return ErrorConstants.ERROR_CODE_UNSUPPORTED_GRANT_TYPE;
+            case ErrorConstants.INVALID_SCOPE:
+                return ErrorConstants.ERROR_CODE_INVALID_SCOPE;
+            case ErrorConstants.INSUFFICIENT_SCOPE:
+                return ErrorConstants.ERROR_CODE_INSUFFICIENT_SCOPE;
+            case ErrorConstants.INVALID_TOKEN:
+                return ErrorConstants.ERROR_CODE_INVALID_TOKEN;
+            case ErrorConstants.REDIRECT_URI_MISMATCH:
+                return ErrorConstants.ERROR_CODE_REDIRECT_URI_MISMATCH;
+            case ErrorConstants.UNSUPPORTED_RESPONSE_TYPE:
+                return ErrorConstants.ERROR_CODE_UNSUPPORTED_RESPONSE_TYPE;
+            case ErrorConstants.ACCESS_DENIED:
+                return ErrorConstants.ERROR_CODE_ACCESS_DENIED;
+            case ErrorConstants.UNAUTHORIZED:
+                return ErrorConstants.ERROR_CODE_UNAUTHORIZED;
             default:
-                return ErrorCodeConstants.ERROR_CODE_UNKNOWN_ERROR;
+                return ErrorConstants.ERROR_CODE_UNKNOWN_ERROR;
         }
     }
 
@@ -79,13 +79,13 @@ public class AuthenticationEntryPoint implements org.springframework.security.we
 
         AuthenticationException authenticationException = (AuthenticationException) throwableAnalyzer.getFirstThrowableOfType(AuthenticationException.class, causeChain);
         if (ObjectUtils.isNotNull(authenticationException)) {
-            return ErrorCodeConstants.UNAUTHORIZED;
+            return ErrorConstants.UNAUTHORIZED;
         }
 
         AccessDeniedException accessDeniedException = (AccessDeniedException) throwableAnalyzer.getFirstThrowableOfType(AccessDeniedException.class, causeChain);
         if (ObjectUtils.isNotNull(accessDeniedException)) {
-            return ErrorCodeConstants.ACCESS_DENIED;
+            return ErrorConstants.ACCESS_DENIED;
         }
-        return ErrorCodeConstants.ERROR_CODE_UNKNOWN_ERROR;
+        return ErrorConstants.ERROR_CODE_UNKNOWN_ERROR;
     }
 }

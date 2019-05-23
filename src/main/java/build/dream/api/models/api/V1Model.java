@@ -1,9 +1,11 @@
 package build.dream.api.models.api;
 
+import build.dream.api.constants.Constants;
 import build.dream.common.annotations.InstantiateObjectKey;
 import build.dream.common.models.BasicModel;
 
 import javax.validation.constraints.NotNull;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class V1Model extends BasicModel {
@@ -22,10 +24,6 @@ public class V1Model extends BasicModel {
 
     @NotNull
     private String signature;
-
-    @NotNull(message = "参数(biz_content)不能为空！")
-    @InstantiateObjectKey(name = "biz_content")
-    private String bizContent;
 
     public String getAccessToken() {
         return accessToken;
@@ -67,22 +65,13 @@ public class V1Model extends BasicModel {
         this.signature = signature;
     }
 
-    public String getBizContent() {
-        return bizContent;
-    }
-
-    public void setBizContent(String bizContent) {
-        this.bizContent = bizContent;
-    }
-
     @Override
     public String toString() {
         StringBuilder stringBuilder = new StringBuilder();
         stringBuilder.append("access_token=").append(accessToken);
-        stringBuilder.append("&biz_content=").append(bizContent);
         stringBuilder.append("&id=").append(id);
         stringBuilder.append("&method=").append(method);
-        stringBuilder.append("&timestamp=").append(signature);
+        stringBuilder.append("&timestamp=").append(new SimpleDateFormat(Constants.DEFAULT_DATE_PATTERN).format(timestamp));
         return stringBuilder.toString();
     }
 }
