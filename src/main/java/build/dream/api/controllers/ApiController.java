@@ -46,9 +46,8 @@ public class ApiController {
             verifySign(v1Model, requestBody, tenantUserDetails.getPrivateKey(), tenantUserDetails.getPublicKey());
 
             String partitionCode = "zd1";
-            String bizContent = requestParameters.get("biz_content");
             ApplicationHandler.getHttpServletRequest().getQueryString();
-            apiRest = ProxyUtils.doPostWithRequestBody(partitionCode, serviceName, controllerName, actionName, requestBody);
+            apiRest = ProxyUtils.doPostWithJsonRequestBody(partitionCode, serviceName, controllerName, actionName, requestBody);
             ValidateUtils.isTrue(apiRest.isSuccessful(), apiRest.getError());
 
             apiRest.sign(PLATFORM_PRIVATE_KEY, Constants.DEFAULT_DATE_PATTERN);
