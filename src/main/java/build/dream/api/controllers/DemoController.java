@@ -62,6 +62,7 @@ public class DemoController {
         for (Class<? extends BaseDomain> domainClass : SyncDataConfiguration.SYNC_DOMAIN_CLASSES) {
             boolean proceed = true;
             BigInteger maxId = BigInteger.ZERO;
+            String domainClassName = domainClass.getName();
             while (proceed) {
                 PagedSearchModel pagedSearchModel = new PagedSearchModel();
                 pagedSearchModel.addSearchCondition("id", Constants.SQL_OPERATION_SYMBOL_GREATER_THAN, maxId);
@@ -74,8 +75,8 @@ public class DemoController {
                 int size = data.size();
                 if (size > 0) {
                     Map<String, Object> valueMap = new HashMap<String, Object>();
-                    valueMap.put(SyncDataConfiguration.FIELD_NAME_DOMAIN_CLASS_NAME, domainClass.getName());
-                    valueMap.put(SyncDataConfiguration.FIELD_NAME_DATA, JacksonUtils.writeValueAsString(data));
+                    valueMap.put(SyncDataConfiguration.FIELD_NAME_DOMAIN_CLASS_NAME, domainClassName);
+                    valueMap.put(SyncDataConfiguration.FIELD_NAME_DATA, ZipUtils.zipText(JacksonUtils.writeValueAsString(data)));
                     CommonRedisUtils.lpush(SyncDataConfiguration.KEY_SYNC_DATA, JacksonUtils.writeValueAsString(valueMap));
                     maxId = data.get(size - 1).getId();
                 } else {

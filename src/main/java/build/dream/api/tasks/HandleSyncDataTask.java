@@ -4,6 +4,7 @@ import build.dream.api.domains.SyncDataConfiguration;
 import build.dream.common.utils.CommonRedisUtils;
 import build.dream.common.utils.DatabaseHelper;
 import build.dream.common.utils.JacksonUtils;
+import build.dream.common.utils.ZipUtils;
 import org.apache.commons.lang.StringUtils;
 
 import java.util.List;
@@ -29,7 +30,7 @@ public class HandleSyncDataTask implements Runnable {
                     String domainClassName = dataMap.get(SyncDataConfiguration.FIELD_NAME_DOMAIN_CLASS_NAME);
                     String data = dataMap.get(SyncDataConfiguration.FIELD_NAME_DATA);
                     Class<?> domainClass = forName(domainClassName);
-                    List<?> dataList = JacksonUtils.readValueAsList(data, domainClass);
+                    List<?> dataList = JacksonUtils.readValueAsList(ZipUtils.unzipText(data), domainClass);
                     DatabaseHelper.insertAll(dataList);
                 }
             } catch (Exception e) {
