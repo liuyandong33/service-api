@@ -1,6 +1,7 @@
 package build.dream.api.listeners;
 
 import build.dream.api.mappers.CommonMapper;
+import build.dream.api.tasks.HandleSyncDataTask;
 import build.dream.common.listeners.BasicServletContextListener;
 
 import javax.servlet.ServletContextEvent;
@@ -12,6 +13,7 @@ public class ApiServletContextListener extends BasicServletContextListener {
     public void contextInitialized(ServletContextEvent servletContextEvent) {
         super.contextInitialized(servletContextEvent);
         super.previousInjectionBean(servletContextEvent.getServletContext(), CommonMapper.class);
+        new HandleSyncDataTask().start();
     }
 
     @Override
