@@ -1,8 +1,8 @@
 package build.dream.api.listeners;
 
-import build.dream.api.mappers.CommonMapper;
 import build.dream.api.tasks.HandleSyncDataTask;
 import build.dream.common.listeners.BasicServletContextListener;
+import build.dream.common.mappers.CommonMapper;
 
 import javax.servlet.ServletContextEvent;
 import javax.servlet.annotation.WebListener;
