@@ -55,6 +55,7 @@ public class DemoController {
         SqlSession sqlSession = sqlSessionFactory.openSession(connection);
 
         Configuration configuration = sqlSessionFactory.getConfiguration();
+        configuration.setDatabaseId(Constants.DATABASE_ID_SQL_SERVER);
         configuration.addMapper(UniversalMapper.class);
         configuration.addMapper(CommonMapper.class);
         UniversalMapper universalMapper = sqlSession.getMapper(UniversalMapper.class);
@@ -69,7 +70,6 @@ public class DemoController {
                 pagedSearchModel.setOrderBy("id");
                 pagedSearchModel.setPage(1);
                 pagedSearchModel.setRows(5000);
-                pagedSearchModel.setDatabaseProvider(Constants.DATABASE_PROVIDER_SQL_SERVER);
 
                 List<? extends BaseDomain> data = UniversalDatabaseHelper.findAllPaged(universalMapper, domainClass, pagedSearchModel);
                 int size = data.size();
