@@ -17,6 +17,7 @@ buildscript {
 }
 
 apply plugin: "java"
+apply plugin: "scala"
 apply plugin: "org.springframework.boot"
 apply plugin: "io.spring.dependency-management"
 apply plugin: "idea"
@@ -98,6 +99,26 @@ publishing {
                 version version
             }
             artifactId = projectName
+        }
+    }
+}
+
+sourceSets {
+    main {
+        scala {
+            srcDirs = ["src/main/java", "src/main/scala"]
+        }
+        java {
+            srcDirs = []
+        }
+    }
+
+    test {
+        scala {
+            srcDirs = ["src/test/java", "src/test/scala"]
+        }
+        java {
+            srcDirs = []
         }
     }
 }

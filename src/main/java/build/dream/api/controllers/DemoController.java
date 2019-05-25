@@ -1,9 +1,9 @@
 package build.dream.api.controllers;
 
 import build.dream.api.constants.Constants;
-import build.dream.api.domains.BaseDomain;
 import build.dream.api.domains.SyncDataConfiguration;
 import build.dream.common.api.ApiRest;
+import build.dream.common.basic.IdDomain;
 import build.dream.common.mappers.CommonMapper;
 import build.dream.common.mappers.UniversalMapper;
 import build.dream.common.utils.*;
@@ -60,7 +60,7 @@ public class DemoController {
         configuration.addMapper(CommonMapper.class);
         UniversalMapper universalMapper = sqlSession.getMapper(UniversalMapper.class);
 
-        for (Class<? extends BaseDomain> domainClass : SyncDataConfiguration.SYNC_DOMAIN_CLASSES) {
+        for (Class<? extends IdDomain> domainClass : SyncDataConfiguration.SYNC_DOMAIN_CLASSES) {
             boolean proceed = true;
             BigInteger maxId = BigInteger.ZERO;
             String domainClassName = domainClass.getName();
@@ -71,7 +71,7 @@ public class DemoController {
                 pagedSearchModel.setPage(1);
                 pagedSearchModel.setRows(5000);
 
-                List<? extends BaseDomain> data = UniversalDatabaseHelper.findAllPaged(universalMapper, domainClass, pagedSearchModel);
+                List<? extends IdDomain> data = UniversalDatabaseHelper.findAllPaged(universalMapper, domainClass, pagedSearchModel);
                 int size = data.size();
                 if (size > 0) {
                     Map<String, Object> valueMap = new HashMap<String, Object>();
