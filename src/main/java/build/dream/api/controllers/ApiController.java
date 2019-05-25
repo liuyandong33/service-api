@@ -29,6 +29,7 @@ public class ApiController {
     public String v1(HttpServletRequest httpServletRequest) {
         ApiRest apiRest = null;
         Map<String, String> requestParameters = ApplicationHandler.getRequestParameters(httpServletRequest);
+        String requestBody = null;
         try {
             V1Model v1Model = ApplicationHandler.instantiateObject(V1Model.class, requestParameters);
             v1Model.validateAndThrow();
@@ -42,7 +43,7 @@ public class ApiController {
 
             TenantUserDetails tenantUserDetails = (TenantUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
-            String requestBody = ApplicationHandler.getRequestBody(httpServletRequest, Constants.CHARSET_NAME_UTF_8);
+            requestBody = ApplicationHandler.getRequestBody(httpServletRequest, Constants.CHARSET_NAME_UTF_8);
             verifySign(v1Model, requestBody, tenantUserDetails.getPrivateKey(), tenantUserDetails.getPublicKey());
 
             String partitionCode = "zd1";
@@ -64,7 +65,7 @@ public class ApiController {
             }
             apiRest = ApiRest.builder().error(new Error(code, message)).successful(false).build();
             apiRest.sign(PLATFORM_PRIVATE_KEY, Constants.DEFAULT_DATE_PATTERN);
-            LogUtils.error("处理失败", this.getClass().getName(), "v1", e, requestParameters);
+            LogUtils.error("处理失败", this.getClass().getName(), "v1", e, requestParameters, requestBody);
         }
         return GsonUtils.toJson(apiRest, Constants.DEFAULT_DATE_PATTERN);
     }
