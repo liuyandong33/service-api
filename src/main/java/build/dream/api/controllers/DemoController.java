@@ -55,7 +55,7 @@ public class DemoController {
         SqlSession sqlSession = sqlSessionFactory.openSession(connection);
 
         Configuration configuration = sqlSessionFactory.getConfiguration();
-        configuration.setDatabaseId(Constants.DATABASE_ID_SQL_SERVER);
+        configuration.setDatabaseId(DatabaseUtils.obtainDatabaseId(connection, false));
         configuration.addMapper(UniversalMapper.class);
         configuration.addMapper(CommonMapper.class);
         UniversalMapper universalMapper = sqlSession.getMapper(UniversalMapper.class);
