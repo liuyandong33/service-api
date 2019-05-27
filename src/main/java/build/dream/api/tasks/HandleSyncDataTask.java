@@ -1,6 +1,6 @@
 package build.dream.api.tasks;
 
-import build.dream.api.domains.SyncDataConfiguration;
+import build.dream.api.configurations.SyncDataConfiguration;
 import build.dream.common.basic.IdDomain;
 import build.dream.common.utils.CommonRedisUtils;
 import build.dream.common.utils.DatabaseHelper;
@@ -23,7 +23,7 @@ public class HandleSyncDataTask implements Runnable {
 
     @Override
     public void run() {
-        while (true) {
+        /*while (true) {
             try {
                 String value = CommonRedisUtils.blpop(SyncDataConfiguration.KEY_SYNC_DATA, 30, TimeUnit.SECONDS);
                 if (StringUtils.isNotBlank(value)) {
@@ -37,7 +37,7 @@ public class HandleSyncDataTask implements Runnable {
             } catch (Exception e) {
                 e.printStackTrace();
             }
-        }
+        }*/
     }
 
     public void start() {
