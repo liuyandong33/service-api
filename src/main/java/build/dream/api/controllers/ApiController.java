@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.HashMap;
 import java.util.Map;
 
 @Controller
@@ -47,8 +48,12 @@ public class ApiController {
             verifySign(v1Model, requestBody, tenantUserDetails.getPrivateKey(), tenantUserDetails.getPublicKey());
 
             String partitionCode = "zd1";
-            ApplicationHandler.getHttpServletRequest().getQueryString();
-            apiRest = ProxyUtils.doPostWithJsonRequestBody(partitionCode, serviceName, controllerName, actionName, requestBody);
+
+            Map<String, String> queryParams = new HashMap<String, String>();
+            queryParams.put("access_token", v1Model.getAccessToken());
+            queryParams.put("timestamp", requestParameters.get("timestamp"));
+            queryParams.put("id", v1Model.getId());
+            apiRest = ProxyUtils.doPostWithJsonRequestBody(partitionCode, serviceName, controllerName, actionName, queryParams, requestBody);
             ValidateUtils.isTrue(apiRest.isSuccessful(), apiRest.getError());
 
             apiRest.sign(PLATFORM_PRIVATE_KEY, Constants.DEFAULT_DATE_PATTERN);
