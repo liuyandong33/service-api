@@ -89,4 +89,10 @@ public class DemoController {
 
         return GsonUtils.toJson(ApiRest.builder().message("处理成功！").successful(true).build());
     }
+
+    @RequestMapping(value = "/demo")
+    @ResponseBody
+    public String demo() {
+        return Constants.SUCCESS;
+    }
 }

@@ -1,10 +1,8 @@
 package build.dream.api.domains;
 
-import build.dream.common.basic.IdDomain;
-
 import java.math.BigDecimal;
 
-public class TmpFdb extends IdDomain {
+public class TmpFdb extends BaseDomain {
     private String identityInfo;
     private String sfdbh;
     private String sfdmc;
