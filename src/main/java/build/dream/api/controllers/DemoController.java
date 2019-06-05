@@ -3,6 +3,10 @@ package build.dream.api.controllers;
 import build.dream.api.configurations.SyncDataConfiguration;
 import build.dream.api.constants.Constants;
 import build.dream.api.domains.BaseDomain;
+import build.dream.api.models.demo.DemoModel;
+import build.dream.api.services.DemoService;
+import build.dream.common.annotations.ApiRestAction;
+import build.dream.common.annotations.OnlyAllowedApplicationJsonUtf8;
 import build.dream.common.api.ApiRest;
 import build.dream.common.mappers.CommonMapper;
 import build.dream.common.mappers.UniversalMapper;
@@ -12,8 +16,10 @@ import org.apache.ibatis.session.Configuration;
 import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.apache.ibatis.session.SqlSessionFactoryBuilder;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.io.IOException;
@@ -90,9 +96,11 @@ public class DemoController {
         return GsonUtils.toJson(ApiRest.builder().message("处理成功！").successful(true).build());
     }
 
-    @RequestMapping(value = "/demo")
+    @RequestMapping(value = "/demo", method = {RequestMethod.GET, RequestMethod.POST}, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     @ResponseBody
+    @OnlyAllowedApplicationJsonUtf8
+    @ApiRestAction(modelClass = DemoModel.class, serviceClass = DemoService.class, serviceMethodName = "demo", error = "处理失败")
     public String demo() {
-        return Constants.SUCCESS;
+        return null;
     }
 }
