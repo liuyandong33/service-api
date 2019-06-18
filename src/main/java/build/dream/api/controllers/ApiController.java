@@ -72,7 +72,7 @@ public class ApiController {
             apiRest.sign(PLATFORM_PRIVATE_KEY, Constants.DEFAULT_DATE_PATTERN);
             LogUtils.error("处理失败", this.getClass().getName(), "v1", e, requestParameters, requestBody);
         }
-        return GsonUtils.toJson(apiRest, Constants.DEFAULT_DATE_PATTERN);
+        return JacksonUtils.writeValueAsString(apiRest, Constants.DEFAULT_DATE_PATTERN);
     }
 
     private void verifySign(V1Model v1Model, String requestBody, String privateKey, String publicKey) {
