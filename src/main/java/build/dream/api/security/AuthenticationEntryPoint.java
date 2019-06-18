@@ -7,6 +7,7 @@ import build.dream.common.exceptions.Error;
 import build.dream.common.utils.ConfigurationUtils;
 import build.dream.common.utils.GsonUtils;
 import build.dream.common.utils.ObjectUtils;
+import org.springframework.http.MediaType;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.oauth2.common.DefaultThrowableAnalyzer;
@@ -25,6 +26,7 @@ public class AuthenticationEntryPoint implements org.springframework.security.we
 
     @Override
     public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException) throws IOException {
+        response.setContentType(MediaType.APPLICATION_JSON_UTF8_VALUE);
         response.getWriter().write(buildResult(authException));
     }
 

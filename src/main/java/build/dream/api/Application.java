@@ -9,7 +9,7 @@ import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 
 @SpringBootApplication(exclude = DataSourceAutoConfiguration.class)
 @ServletComponentScan
-@MapperScan(basePackages = "build.dream.common.mappers")
+@MapperScan(basePackages = {"build.dream.common.mappers", "build.dream.api.mappers"})
 @EnableDiscoveryClient
 public class Application {
     public static void main(String[] args) {

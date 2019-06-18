@@ -1,9 +1,9 @@
 package build.dream.api.domains;
 
 
-import build.dream.common.annotations.GenerationStrategy;
 import build.dream.common.annotations.Id;
 import build.dream.common.basic.IdDomain;
+import build.dream.common.orm.GenerationStrategy;
 import build.dream.common.orm.SnowflakeIdGenerator;
 
 import java.math.BigInteger;
