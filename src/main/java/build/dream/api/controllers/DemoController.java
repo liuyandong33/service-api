@@ -3,14 +3,12 @@ package build.dream.api.controllers;
 import build.dream.api.configurations.SyncDataConfiguration;
 import build.dream.api.constants.Constants;
 import build.dream.api.domains.BaseDomain;
-import build.dream.api.models.demo.DemoModel;
-import build.dream.api.services.DemoService;
-import build.dream.common.annotations.ApiRestAction;
-import build.dream.common.annotations.OnlyAllowedApplicationJsonUtf8;
 import build.dream.common.api.ApiRest;
 import build.dream.common.mappers.CommonMapper;
 import build.dream.common.mappers.UniversalMapper;
 import build.dream.common.utils.*;
+import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.lang.StringUtils;
 import org.apache.ibatis.io.Resources;
 import org.apache.ibatis.session.Configuration;
 import org.apache.ibatis.session.SqlSession;
@@ -28,9 +26,7 @@ import java.math.BigInteger;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Controller
 @RequestMapping(value = "/demo")
@@ -96,11 +92,34 @@ public class DemoController {
         return GsonUtils.toJson(ApiRest.builder().message("处理成功！").successful(true).build());
     }
 
-    @RequestMapping(value = "/demo", method = {RequestMethod.GET, RequestMethod.POST}, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    @RequestMapping(value = "/sign")
+    public String sign() {
+        return "demo/sign";
+    }
+
+    @RequestMapping(value = "/doSign", method = {RequestMethod.GET, RequestMethod.POST}, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     @ResponseBody
-    @OnlyAllowedApplicationJsonUtf8
-    @ApiRestAction(modelClass = DemoModel.class, serviceClass = DemoService.class, serviceMethodName = "demo", error = "处理失败")
-    public String demo() {
-        return null;
+    public String doSign() {
+        Map<String, String> requestParameters = ApplicationHandler.getRequestParameters();
+        String accessToken = requestParameters.get("access_token");
+        String method = requestParameters.get("method");
+        String timestamp = requestParameters.get("timestamp");
+        String id = requestParameters.get("id");
+        String body = requestParameters.get("body");
+        String privateKey = requestParameters.get("privateKey");
+
+        Map<String, String> sortedMap = new TreeMap<String, String>();
+        sortedMap.put("access_token", accessToken);
+        sortedMap.put("method", method);
+        sortedMap.put("timestamp", timestamp);
+        sortedMap.put("id", id);
+
+        List<String> pairs = new ArrayList<String>();
+        for (Map.Entry<String, String> entry : sortedMap.entrySet()) {
+            pairs.add(entry.getKey() + "=" + entry.getValue());
+        }
+        byte[] data = (StringUtils.join(pairs, "&") + body).getBytes(Constants.CHARSET_UTF_8);
+        byte[] sign = SignatureUtils.sign(data, Base64.decodeBase64(privateKey), SignatureUtils.SIGNATURE_TYPE_SHA256_WITH_RSA);
+        return Base64.encodeBase64String(sign);
     }
 }

@@ -4,6 +4,8 @@ import build.dream.api.constants.Constants;
 import build.dream.api.matchers.MethodRequestMatcher;
 import build.dream.api.security.AccessDeniedHandler;
 import build.dream.api.security.ApiFilterInvocationSecurityMetadataSource;
+import build.dream.api.services.PrivilegeService;
+import build.dream.common.saas.domains.PosPrivilege;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -35,6 +37,8 @@ public class ResourceServerConfiguration extends ResourceServerConfigurerAdapter
     private AuthenticationEntryPoint authenticationEntryPoint;
     @Autowired
     private AccessDeniedHandler accessDeniedHandler;
+    @Autowired
+    private PrivilegeService privilegeService;
 
     @Override
     public void configure(ResourceServerSecurityConfigurer resources) {
@@ -76,11 +80,11 @@ public class ResourceServerConfiguration extends ResourceServerConfigurerAdapter
     @Bean
     public ApiFilterInvocationSecurityMetadataSource webFilterInvocationSecurityMetadataSource() throws NoSuchMethodException, IllegalAccessException, InvocationTargetException {
         LinkedHashMap<RequestMatcher, Collection<ConfigAttribute>> requestMap = new LinkedHashMap<RequestMatcher, Collection<ConfigAttribute>>();
-        String[] methods = new String[]{"eleme.order.getOrder", "alipay.trade.fastpay.refund.query"};
-        for (String method : methods) {
+        List<PosPrivilege> posPrivileges = privilegeService.obtainAllPosPrivileges();
+        for (PosPrivilege posPrivilege : posPrivileges) {
+            String method = posPrivilege.getServiceName() + "." + posPrivilege.getControllerName() + "." + posPrivilege.getActionName();
             requestMap.put(buildMethodRequestMatcher(method), buildHasAuthorityConfigAttributes(method));
         }
-
         requestMap.put(AnyRequestMatcher.INSTANCE, buildAuthenticatedConfigAttributes());
         return new ApiFilterInvocationSecurityMetadataSource(requestMap);
     }
