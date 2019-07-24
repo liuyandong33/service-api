@@ -6,6 +6,7 @@ import build.dream.api.domains.BaseDomain;
 import build.dream.common.api.ApiRest;
 import build.dream.common.mappers.CommonMapper;
 import build.dream.common.mappers.UniversalMapper;
+import build.dream.common.saas.domains.TenantSecretKey;
 import build.dream.common.utils.*;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang.StringUtils;
@@ -19,6 +20,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.servlet.ModelAndView;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -93,14 +95,49 @@ public class DemoController {
     }
 
     @RequestMapping(value = "/sign")
-    public String sign() {
-        return "demo/sign";
+    public ModelAndView sign() {
+        Map<String, String> requestParameters = ApplicationHandler.getRequestParameters();
+        String tenantId = requestParameters.get("tenantId");
+        String tenantCode = requestParameters.get("tenantCode");
+
+
+        Map<String, Object> model = new HashMap<String, Object>();
+        model.put("timestamp", CustomDateUtils.format(new Date(), Constants.DEFAULT_DATE_PATTERN));
+        model.put("id", UUID.randomUUID().toString());
+
+        if (StringUtils.isNotBlank(tenantId)) {
+            SearchModel searchModel = SearchModel.builder()
+                    .autoSetDeletedFalse()
+                    .equal(TenantSecretKey.ColumnName.TENANT_ID, BigInteger.valueOf(Long.valueOf(tenantId)))
+                    .build();
+            TenantSecretKey tenantSecretKey = DatabaseHelper.find(TenantSecretKey.class, searchModel);
+            if (Objects.nonNull(tenantSecretKey)) {
+                model.put("privateKey", tenantSecretKey.getPrivateKey());
+            }
+        }
+
+        if (StringUtils.isNotBlank(tenantCode)) {
+            SearchModel searchModel = SearchModel.builder()
+                    .autoSetDeletedFalse()
+                    .equal(TenantSecretKey.ColumnName.TENANT_CODE, tenantCode)
+                    .build();
+            TenantSecretKey tenantSecretKey = DatabaseHelper.find(TenantSecretKey.class, searchModel);
+            if (Objects.nonNull(tenantSecretKey)) {
+                model.put("privateKey", tenantSecretKey.getPrivateKey());
+            }
+        }
+
+        ModelAndView modelAndView = new ModelAndView();
+        modelAndView.setViewName("demo/sign");
+        modelAndView.addAllObjects(model);
+        return modelAndView;
     }
 
     @RequestMapping(value = "/doSign", method = {RequestMethod.GET, RequestMethod.POST}, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     @ResponseBody
     public String doSign() {
         Map<String, String> requestParameters = ApplicationHandler.getRequestParameters();
+        String serviceName = requestParameters.get("serviceName");
         String accessToken = requestParameters.get("access_token");
         String method = requestParameters.get("method");
         String timestamp = requestParameters.get("timestamp");
@@ -120,6 +157,18 @@ public class DemoController {
         }
         byte[] data = (StringUtils.join(pairs, "&") + body).getBytes(Constants.CHARSET_UTF_8);
         byte[] sign = SignatureUtils.sign(data, Base64.decodeBase64(privateKey), SignatureUtils.SIGNATURE_TYPE_SHA256_WITH_RSA);
-        return Base64.encodeBase64String(sign);
+
+        String signature = Base64.encodeBase64String(sign);
+        Map<String, String> queryStringMap = new HashMap<String, String>();
+        queryStringMap.put("access_token", accessToken);
+        queryStringMap.put("method", method);
+        queryStringMap.put("timestamp", timestamp);
+        queryStringMap.put("id", id);
+        queryStringMap.put("signature", signature);
+
+        Map<String, String> result = new HashMap<String, String>();
+        result.put("url", CommonUtils.getOutsideServiceDomain(serviceName) + "?" + WebUtils.buildQueryString(queryStringMap, Constants.CHARSET_NAME_UTF_8));
+        result.put("signature", signature);
+        return JacksonUtils.writeValueAsString(result);
     }
 }
