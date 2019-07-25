@@ -47,7 +47,7 @@ public class ApiController {
             requestBody = ApplicationHandler.getRequestBody(httpServletRequest, Constants.CHARSET_NAME_UTF_8);
             verifySign(v1Model, requestBody, tenantUserDetails.getPrivateKey(), tenantUserDetails.getPublicKey());
 
-            String partitionCode = "zd1";
+            String partitionCode = tenantUserDetails.getPartitionCode();
 
             Map<String, String> queryParams = new HashMap<String, String>();
             queryParams.put("access_token", v1Model.getAccessToken());
