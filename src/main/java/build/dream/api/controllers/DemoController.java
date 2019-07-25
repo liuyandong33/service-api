@@ -138,6 +138,7 @@ public class DemoController {
     public String doSign() {
         Map<String, String> requestParameters = ApplicationHandler.getRequestParameters();
         String serviceName = requestParameters.get("serviceName");
+        String apiVersion = requestParameters.get("apiVersion");
         String accessToken = requestParameters.get("access_token");
         String method = requestParameters.get("method");
         String timestamp = requestParameters.get("timestamp");
@@ -167,7 +168,7 @@ public class DemoController {
         queryStringMap.put("signature", signature);
 
         Map<String, String> result = new HashMap<String, String>();
-        result.put("url", CommonUtils.getOutsideServiceDomain(serviceName) + "?" + WebUtils.buildQueryString(queryStringMap, Constants.CHARSET_NAME_UTF_8));
+        result.put("url", CommonUtils.getOutsideUrl(serviceName, "api", apiVersion) + "?" + WebUtils.buildQueryString(queryStringMap, Constants.CHARSET_NAME_UTF_8));
         result.put("signature", signature);
         return JacksonUtils.writeValueAsString(result);
     }

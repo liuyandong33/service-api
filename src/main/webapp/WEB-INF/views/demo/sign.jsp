@@ -13,14 +13,14 @@
     <script type="text/javascript">
         function doSign() {
             var serviceName = $("#service_name").val();
-            alert(serviceName)
+            var apiVersion = $("#api_version").val();
             var accessToken = $("#access_token").val();
             var method = $("#method").val();
             var timestamp = $("#timestamp").val();
             var id = $("#id").val();
             var body = $("#body").val();
             var privateKey = $("#private_key").val();
-            $.post("../demo/doSign", {serviceName: serviceName, accessToken: accessToken, method: method, timestamp: timestamp, id: id, body: body, privateKey: privateKey}, function (result) {
+            $.post("../demo/doSign", {serviceName: serviceName, apiVersion: apiVersion, accessToken: accessToken, method: method, timestamp: timestamp, id: id, body: body, privateKey: privateKey}, function (result) {
                 var signature = result["signature"];
                 $("#signature").text(result["signature"]);
                 $("#url").text(result["url"]);
@@ -35,6 +35,11 @@
         <option value="appapi">appapi</option>
         <option value="posapi">posapi</option>
         <option value="webapi">webapi</option>
+    </select>
+    <br><br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;apiVersion:
+    <select id="api_version" style="height: 30px;width: 400px;">
+        <option value="v1">v1</option>
     </select>
     <br><br>
     access_token：<input type="text" id="access_token" style="height: 30px;width: 400px;"><br><br>
