@@ -139,7 +139,7 @@ public class DemoController {
         Map<String, String> requestParameters = ApplicationHandler.getRequestParameters();
         String serviceName = requestParameters.get("serviceName");
         String apiVersion = requestParameters.get("apiVersion");
-        String accessToken = requestParameters.get("access_token");
+        String accessToken = requestParameters.get("accessToken");
         String method = requestParameters.get("method");
         String timestamp = requestParameters.get("timestamp");
         String id = requestParameters.get("id");
