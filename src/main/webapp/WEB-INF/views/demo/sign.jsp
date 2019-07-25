@@ -37,7 +37,6 @@
         }
 
         function sign() {
-            debugger
             var result = doSign();
             $("#signature").val(result["signature"]);
             $("#url").val(result["url"]);
@@ -54,7 +53,7 @@
                 cache: false,
                 async: false,
                 url: info["url"],
-                contentType: "application/json",
+                contentType: "application/json;charset=UTF-8",
                 dataType: "json",
                 data: $("#body").val(),
                 success: function (result) {
