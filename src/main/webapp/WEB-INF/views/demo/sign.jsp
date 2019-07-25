@@ -20,11 +20,47 @@
             var id = $("#id").val();
             var body = $("#body").val();
             var privateKey = $("#private_key").val();
-            $.post("../demo/doSign", {serviceName: serviceName, apiVersion: apiVersion, accessToken: accessToken, method: method, timestamp: timestamp, id: id, body: body, privateKey: privateKey}, function (result) {
-                var signature = result["signature"];
-                $("#signature").text(result["signature"]);
-                $("#url").text(result["url"]);
-            }, "json");
+
+            var data = undefined;
+            $.ajax({
+                type: "POST",
+                cache: false,
+                async: false,
+                url: "../demo/doSign",
+                dataType: "json",
+                data: {serviceName: serviceName, apiVersion: apiVersion, accessToken: accessToken, method: method, timestamp: timestamp, id: id, body: body, privateKey: privateKey},
+                success: function (result) {
+                    data = result;
+                }
+            });
+            return data;
+        }
+
+        function sign() {
+            debugger
+            var result = doSign();
+            $("#signature").val(result["signature"]);
+            $("#url").val(result["url"]);
+        }
+
+        function doCall() {
+            var info = doSign();
+
+            $("#signature").val(info["signature"]);
+            $("#url").val(info["url"]);
+
+            $.ajax({
+                type: "POST",
+                cache: false,
+                async: false,
+                url: info["url"],
+                contentType: "application/json",
+                dataType: "json",
+                data: $("#body").val(),
+                success: function (result) {
+                    $("#result").val(JSON.stringify(result));
+                }
+            });
         }
     </script>
     <style type="text/css">
@@ -78,7 +114,11 @@
     <br><br>
 
     <span class="item_name"></span>
-    <button onclick="doSign();" style="height: 40px;width: 400px;background-color: #00AAEE;border-radius: 4px;border: none;color: #FFFFFF;font-size: 16px;cursor: pointer;">生成签名</button>
+    <button onclick="sign();" style="height: 40px;width: 400px;background-color: #00AAEE;border-radius: 4px;border: none;color: #FFFFFF;font-size: 16px;cursor: pointer;">生成签名</button>
+    <br><br>
+
+    <span class="item_name"></span>
+    <button onclick="doCall();" style="height: 40px;width: 400px;background-color: #00AAEE;border-radius: 4px;border: none;color: #FFFFFF;font-size: 16px;cursor: pointer;">调用</button>
 </div>
 
 <br><br><br><br>
@@ -89,6 +129,10 @@
 <div style="text-align: center;">
     <span class="item_name">url:</span>
     <textarea id="url" style="height: 100px;width: 400px;"></textarea>
+</div>
+<div style="text-align: center;">
+    <span class="item_name">结果:</span>
+    <textarea id="result" style="height: 100px;width: 400px;"></textarea>
 </div>
 </body>
 </html>
