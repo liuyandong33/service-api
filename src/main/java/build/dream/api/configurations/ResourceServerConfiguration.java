@@ -5,8 +5,11 @@ import build.dream.api.matchers.MethodRequestMatcher;
 import build.dream.api.security.AccessDeniedHandler;
 import build.dream.api.security.ApiFilterInvocationSecurityMetadataSource;
 import build.dream.api.services.PrivilegeService;
+import build.dream.common.saas.domains.AppPrivilege;
+import build.dream.common.saas.domains.BackgroundPrivilege;
 import build.dream.common.saas.domains.PosPrivilege;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
@@ -31,6 +34,8 @@ import java.util.List;
 @Configuration
 @EnableResourceServer
 public class ResourceServerConfiguration extends ResourceServerConfigurerAdapter {
+    @Value(value = "#{service.name}")
+    private String serviceName;
     @Autowired
     private RedisConnectionFactory redisConnectionFactory;
     @Autowired
@@ -77,14 +82,55 @@ public class ResourceServerConfiguration extends ResourceServerConfigurerAdapter
         return configAttributes;
     }
 
-    @Bean
-    public ApiFilterInvocationSecurityMetadataSource webFilterInvocationSecurityMetadataSource() throws NoSuchMethodException, IllegalAccessException, InvocationTargetException {
-        LinkedHashMap<RequestMatcher, Collection<ConfigAttribute>> requestMap = new LinkedHashMap<RequestMatcher, Collection<ConfigAttribute>>();
+    private LinkedHashMap<RequestMatcher, Collection<ConfigAttribute>> buildPosPrivilegeMap() {
+        LinkedHashMap<RequestMatcher, Collection<ConfigAttribute>> posPrivilegeMap = new LinkedHashMap<RequestMatcher, Collection<ConfigAttribute>>();
         List<PosPrivilege> posPrivileges = privilegeService.obtainAllPosPrivileges();
         for (PosPrivilege posPrivilege : posPrivileges) {
             String method = posPrivilege.getServiceName() + "." + posPrivilege.getControllerName() + "." + posPrivilege.getActionName();
-            requestMap.put(buildMethodRequestMatcher(method), buildHasAuthorityConfigAttributes(method));
+            posPrivilegeMap.put(buildMethodRequestMatcher(method), buildHasAuthorityConfigAttributes(method));
         }
+        return posPrivilegeMap;
+    }
+
+    private LinkedHashMap<RequestMatcher, Collection<ConfigAttribute>> buildAppPrivilegeMap() {
+        LinkedHashMap<RequestMatcher, Collection<ConfigAttribute>> appPrivilegeMap = new LinkedHashMap<RequestMatcher, Collection<ConfigAttribute>>();
+        List<AppPrivilege> appPrivileges = privilegeService.obtainAllAppPrivileges();
+        for (AppPrivilege appPrivilege : appPrivileges) {
+            String method = appPrivilege.getServiceName() + "." + appPrivilege.getControllerName() + "." + appPrivilege.getActionName();
+            appPrivilegeMap.put(buildMethodRequestMatcher(method), buildHasAuthorityConfigAttributes(method));
+        }
+        return appPrivilegeMap;
+    }
+
+    private LinkedHashMap<RequestMatcher, Collection<ConfigAttribute>> buildBackgroundPrivilegeMap() {
+        LinkedHashMap<RequestMatcher, Collection<ConfigAttribute>> appPrivilegeMap = new LinkedHashMap<RequestMatcher, Collection<ConfigAttribute>>();
+        List<BackgroundPrivilege> backgroundPrivileges = privilegeService.obtainAllBackgroundPrivileges();
+        for (BackgroundPrivilege backgroundPrivilege : backgroundPrivileges) {
+            String method = backgroundPrivilege.getServiceName() + "." + backgroundPrivilege.getControllerName() + "." + backgroundPrivilege.getActionName();
+            appPrivilegeMap.put(buildMethodRequestMatcher(method), buildHasAuthorityConfigAttributes(method));
+        }
+        return appPrivilegeMap;
+    }
+
+    private LinkedHashMap<RequestMatcher, Collection<ConfigAttribute>> buildPrivilegeMap() {
+        if (Constants.SERVICE_NAME_POSAPI.equals(serviceName)) {
+            return buildPosPrivilegeMap();
+        }
+
+        if (Constants.SERVICE_NAME_APPAPI.equals(serviceName)) {
+            return buildAppPrivilegeMap();
+        }
+
+        if (Constants.SERVICE_NAME_WEBAPI.equals(serviceName)) {
+            return buildBackgroundPrivilegeMap();
+        }
+        return null;
+    }
+
+    @Bean
+    public ApiFilterInvocationSecurityMetadataSource webFilterInvocationSecurityMetadataSource() throws NoSuchMethodException, IllegalAccessException, InvocationTargetException {
+        LinkedHashMap<RequestMatcher, Collection<ConfigAttribute>> requestMap = new LinkedHashMap<RequestMatcher, Collection<ConfigAttribute>>();
+        requestMap.putAll(buildPrivilegeMap());
         requestMap.put(AnyRequestMatcher.INSTANCE, buildAuthenticatedConfigAttributes());
         return new ApiFilterInvocationSecurityMetadataSource(requestMap);
     }
