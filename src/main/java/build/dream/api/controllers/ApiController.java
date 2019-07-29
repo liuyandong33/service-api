@@ -53,7 +53,8 @@ public class ApiController {
             queryParams.put("access_token", v1Model.getAccessToken());
             queryParams.put("timestamp", requestParameters.get("timestamp"));
             queryParams.put("id", v1Model.getId());
-            apiRest = ProxyUtils.doPostWithJsonRequestBody(partitionCode, serviceName, controllerName, actionName, queryParams, requestBody);
+            String result = ProxyUtils.doPostOriginalWithJsonRequestBody(partitionCode, serviceName, controllerName, actionName, queryParams, requestBody);
+            apiRest = JacksonUtils.readValue(result, ApiRest.class);
             ValidateUtils.isTrue(apiRest.isSuccessful(), apiRest.getError());
 
             apiRest.sign(PLATFORM_PRIVATE_KEY, Constants.DEFAULT_DATE_PATTERN);
