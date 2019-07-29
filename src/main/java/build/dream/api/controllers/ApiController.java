@@ -13,7 +13,6 @@ import org.springframework.http.MediaType;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
@@ -25,13 +24,19 @@ import java.util.Map;
 public class ApiController {
     private static final String PLATFORM_PRIVATE_KEY = ConfigurationUtils.getConfiguration(Constants.PLATFORM_PRIVATE_KEY);
 
-    @RequestMapping(value = "/v1", method = {RequestMethod.GET, RequestMethod.POST}, consumes = MediaType.APPLICATION_JSON_UTF8_VALUE, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    @RequestMapping(value = "/v1", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     @ResponseBody
     public String v1(HttpServletRequest httpServletRequest) {
         ApiRest apiRest = null;
         Map<String, String> requestParameters = ApplicationHandler.getRequestParameters(httpServletRequest);
         String requestBody = null;
         try {
+            String contentType = httpServletRequest.getContentType();
+            ValidateUtils.isTrue(Constants.CONTENT_TYPE_APPLICATION_JSON_UTF8.equals(contentType), ErrorConstants.INVALID_CONTENT_TYPE_ERROR);
+
+            String requestMethod = httpServletRequest.getMethod();
+            ValidateUtils.isTrue(Constants.REQUEST_METHOD_POST.equals(requestMethod), ErrorConstants.INVALID_CONTENT_TYPE_ERROR);
+
             V1Model v1Model = ApplicationHandler.instantiateObject(V1Model.class, requestParameters);
             v1Model.validateAndThrow();
 
@@ -59,21 +64,32 @@ public class ApiController {
 
             apiRest.sign(PLATFORM_PRIVATE_KEY, Constants.DEFAULT_DATE_PATTERN);
         } catch (Exception e) {
-            String code = null;
-            String message = null;
-            if (e instanceof CustomException) {
-                CustomException customException = (CustomException) e;
-                code = customException.getCode();
-                message = customException.getMessage();
-            } else {
-                code = ErrorConstants.ERROR_CODE_UNKNOWN_ERROR;
-                message = e.getMessage();
-            }
-            apiRest = ApiRest.builder().error(new Error(code, message)).successful(false).build();
-            apiRest.sign(PLATFORM_PRIVATE_KEY, Constants.DEFAULT_DATE_PATTERN);
+            apiRest = transformException(e);
             LogUtils.error("处理失败", this.getClass().getName(), "v1", e, requestParameters, requestBody);
         }
         return JacksonUtils.writeValueAsString(apiRest, Constants.DEFAULT_DATE_PATTERN);
+    }
+
+    /**
+     * 转换返回异常
+     *
+     * @param exception
+     * @return
+     */
+    private ApiRest transformException(Exception exception) {
+        String code = null;
+        String message = null;
+        if (exception instanceof CustomException) {
+            CustomException customException = (CustomException) exception;
+            code = customException.getCode();
+            message = customException.getMessage();
+        } else {
+            code = ErrorConstants.ERROR_CODE_UNKNOWN_ERROR;
+            message = exception.getMessage();
+        }
+        ApiRest apiRest = ApiRest.builder().error(new Error(code, message)).successful(false).build();
+        apiRest.sign(PLATFORM_PRIVATE_KEY, Constants.DEFAULT_DATE_PATTERN);
+        return apiRest;
     }
 
     private void verifySign(V1Model v1Model, String requestBody, String privateKey, String publicKey) {
