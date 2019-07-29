@@ -113,3 +113,8 @@ bootJar {
     launchScript {
     }
 }
+
+bootWar {
+    launchScript {
+    }
+}
