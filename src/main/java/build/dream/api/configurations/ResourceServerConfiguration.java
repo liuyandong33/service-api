@@ -34,7 +34,7 @@ import java.util.List;
 @Configuration
 @EnableResourceServer
 public class ResourceServerConfiguration extends ResourceServerConfigurerAdapter {
-    @Value(value = "#{service.name}")
+    @Value(value = "${service.name}")
     private String serviceName;
     @Autowired
     private RedisConnectionFactory redisConnectionFactory;
