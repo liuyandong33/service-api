@@ -71,7 +71,7 @@ public class ApiController {
     }
 
     /**
-     * 转换返回异常
+     * 转换异常
      *
      * @param exception
      * @return
