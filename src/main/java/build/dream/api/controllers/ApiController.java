@@ -35,7 +35,7 @@ public class ApiController {
             ValidateUtils.isTrue(Constants.CONTENT_TYPE_APPLICATION_JSON_UTF8.equals(contentType), ErrorConstants.INVALID_CONTENT_TYPE_ERROR);
 
             String requestMethod = httpServletRequest.getMethod();
-            ValidateUtils.isTrue(Constants.REQUEST_METHOD_POST.equals(requestMethod), ErrorConstants.INVALID_CONTENT_TYPE_ERROR);
+            ValidateUtils.isTrue(Constants.REQUEST_METHOD_POST.equals(requestMethod), ErrorConstants.INVALID_REQUEST_METHOD_ERROR);
 
             V1Model v1Model = ApplicationHandler.instantiateObject(V1Model.class, requestParameters);
             v1Model.validateAndThrow();
