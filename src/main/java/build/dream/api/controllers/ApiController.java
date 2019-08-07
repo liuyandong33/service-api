@@ -3,14 +3,12 @@ package build.dream.api.controllers;
 import build.dream.api.constants.Constants;
 import build.dream.api.models.api.V1Model;
 import build.dream.common.api.ApiRest;
-import build.dream.common.auth.TenantUserDetails;
 import build.dream.common.constants.ErrorConstants;
 import build.dream.common.exceptions.CustomException;
 import build.dream.common.exceptions.Error;
 import build.dream.common.utils.*;
 import org.apache.commons.codec.binary.Base64;
 import org.springframework.http.MediaType;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -47,12 +45,11 @@ public class ApiController {
             String controllerName = array[1];
             String actionName = array[2];
 
-            TenantUserDetails tenantUserDetails = (TenantUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
             requestBody = ApplicationHandler.getRequestBody(httpServletRequest, Constants.CHARSET_NAME_UTF_8);
-            verifySign(v1Model, requestBody, tenantUserDetails.getPrivateKey(), tenantUserDetails.getPublicKey());
+            verifySign(v1Model, requestBody, TenantUtils.obtainPrivateKey(), TenantUtils.obtainPublicKey());
 
-            String partitionCode = tenantUserDetails.getPartitionCode();
+            String partitionCode = TenantUtils.obtainPartitionCode();
 
             Map<String, String> queryParams = new HashMap<String, String>();
             queryParams.put("access_token", v1Model.getAccessToken());
