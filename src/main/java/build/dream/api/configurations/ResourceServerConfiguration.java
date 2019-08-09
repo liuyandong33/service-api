@@ -55,10 +55,10 @@ public class ResourceServerConfiguration extends ResourceServerConfigurerAdapter
 
     @Override
     public void configure(HttpSecurity http) throws Exception {
-        http.requestMatchers().antMatchers("/api/**")
+        http.requestMatchers().antMatchers("/api/**", "/data/**")
                 .and()
                 .authorizeRequests()
-                .antMatchers("/api/**").authenticated();
+                .antMatchers("/api/**", "/data/**").authenticated();
     }
 
     @Bean
