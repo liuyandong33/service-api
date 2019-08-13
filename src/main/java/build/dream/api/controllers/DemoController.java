@@ -6,7 +6,7 @@ import build.dream.api.domains.BaseDomain;
 import build.dream.common.api.ApiRest;
 import build.dream.common.mappers.CommonMapper;
 import build.dream.common.mappers.UniversalMapper;
-import build.dream.common.saas.domains.TenantSecretKey;
+import build.dream.common.domains.saas.TenantSecretKey;
 import build.dream.common.utils.*;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang.StringUtils;
@@ -168,7 +168,10 @@ public class DemoController {
         queryStringMap.put("signature", signature);
 
         Map<String, String> result = new HashMap<String, String>();
-        result.put("url", CommonUtils.getOutsideUrl(serviceName, "api", apiVersion) + "?" + WebUtils.buildQueryString(queryStringMap, Constants.CHARSET_NAME_UTF_8));
+
+        String url = CommonUtils.getOutsideUrl(serviceName, "api", apiVersion) + "?" + WebUtils.buildQueryString(queryStringMap, Constants.CHARSET_NAME_UTF_8);
+        url = "http://localhost:41011/api/v1?" + WebUtils.buildQueryString(queryStringMap, Constants.CHARSET_NAME_UTF_8);
+        result.put("url", url);
         result.put("signature", signature);
         return JacksonUtils.writeValueAsString(result);
     }
