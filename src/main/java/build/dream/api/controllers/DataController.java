@@ -6,6 +6,7 @@ import build.dream.api.utils.ApiUtils;
 import build.dream.common.api.ApiRest;
 import build.dream.common.constants.ErrorConstants;
 import build.dream.common.utils.*;
+import com.aliyun.openservices.ons.api.Message;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -41,15 +42,12 @@ public class DataController {
             UploadDataBodyModel uploadDataBodyModel = JacksonUtils.readValue(requestBody, UploadDataBodyModel.class);
             uploadDataBodyModel.validateAndThrow();
 
-            String data = uploadDataBodyModel.getData();
-            String type = uploadDataBodyModel.getType();
-            boolean zipped = uploadDataBodyModel.getZipped();
-            if (zipped) {
-                data = ZipUtils.unzipText(data);
-            }
-
-            String topic = "_" + TenantUtils.obtainPartitionCode() + "_" + type + "_upload_data_message_topic";
-            KafkaUtils.send(topic, data);
+            String topic = "_" + TenantUtils.obtainPartitionCode() + "_upload_data_message_topic";
+//            KafkaUtils.send(topic, requestBody);
+            Message message = new Message();
+            message.setBody(requestBody.getBytes(Constants.CHARSET_UTF_8));
+            message.setTopic(topic);
+            RocketMQUtils.send(message);
 
             apiRest = ApiRest.builder()
                     .message("上传数据成功！")
