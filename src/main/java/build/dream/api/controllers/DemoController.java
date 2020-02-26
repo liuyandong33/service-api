@@ -4,9 +4,9 @@ import build.dream.api.configurations.SyncDataConfiguration;
 import build.dream.api.constants.Constants;
 import build.dream.api.domains.BaseDomain;
 import build.dream.common.api.ApiRest;
+import build.dream.common.domains.saas.TenantSecretKey;
 import build.dream.common.mappers.CommonMapper;
 import build.dream.common.mappers.UniversalMapper;
-import build.dream.common.domains.saas.TenantSecretKey;
 import build.dream.common.utils.*;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang.StringUtils;
@@ -33,6 +33,8 @@ import java.util.*;
 @Controller
 @RequestMapping(value = "/demo")
 public class DemoController {
+    public static final String PLATFORM_PUBLIC_KEY = ConfigurationUtils.getConfiguration(Constants.PLATFORM_PUBLIC_KEY);
+
     static {
         try {
             Class.forName("net.sourceforge.jtds.jdbc.Driver");
@@ -174,5 +176,21 @@ public class DemoController {
         result.put("url", url);
         result.put("signature", signature);
         return JacksonUtils.writeValueAsString(result);
+    }
+
+    @RequestMapping(value = "/generateTicket", method = {RequestMethod.GET, RequestMethod.POST})
+    @ResponseBody
+    public String generateTicket() {
+        Map<String, String> requestParameters = ApplicationHandler.getRequestParameters();
+        String accessToken = requestParameters.get("accessToken");
+        String clientId = requestParameters.get("clientId");
+
+        Map<String, Object> ticketPlaintextMap = new HashMap<String, Object>();
+        ticketPlaintextMap.put("accessToken", accessToken);
+        ticketPlaintextMap.put("timestamp", System.currentTimeMillis());
+        ticketPlaintextMap.put("clientId", clientId);
+        String ticketPlaintext = JacksonUtils.writeValueAsString(ticketPlaintextMap);
+        byte[] data = RSAUtils.encryptByPrivateKey(ticketPlaintext.getBytes(Constants.CHARSET_UTF_8), Base64.decodeBase64(PLATFORM_PUBLIC_KEY), RSAUtils.PADDING_MODE_RSA_ECB_PKCS1PADDING);
+        return Base64.encodeBase64String(data);
     }
 }

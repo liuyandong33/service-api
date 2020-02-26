@@ -1,4 +1,4 @@
-package build.dream.api.controllers;
+package build.dream.api.models.data;
 
 import build.dream.common.models.BasicModel;
 
