@@ -5,6 +5,7 @@ import build.dream.api.services.WeiXinService;
 import build.dream.common.beans.ComponentAccessToken;
 import build.dream.common.beans.WeiXinOAuthToken;
 import build.dream.common.beans.WeiXinUserInfo;
+import build.dream.common.constants.ConfigurationKeys;
 import build.dream.common.constants.Constants;
 import build.dream.common.domains.saas.WeiXinPublicAccount;
 import build.dream.common.utils.*;
@@ -38,10 +39,10 @@ public class WeiXinController {
         String viewName = null;
         if ("1".equals(authorizeType)) {
             queryParams.put("appid", appId);
-            viewName = "redirect:" + WeiXinUtils.generateAuthorizeUrl(appId, scope, UrlUtils.encode(CommonUtils.getOutsideUrl(ConfigurationUtils.getConfiguration(Constants.SERVICE_NAME), "weiXin", "authorizeCallback") + "?" + WebUtils.buildQueryString(queryParams)), state);
+            viewName = "redirect:" + WeiXinUtils.generateAuthorizeUrl(appId, scope, UrlUtils.encode(CommonUtils.getOutsideUrl(ConfigurationUtils.getConfiguration(ConfigurationKeys.SERVICE_NAME), "weiXin", "authorizeCallback") + "?" + WebUtils.buildQueryString(queryParams)), state);
         } else if ("2".equals(authorizeType)) {
             String componentAppId = ConfigurationUtils.getConfiguration("");
-            viewName = "redirect:" + WeiXinUtils.generateAuthorizeUrl(appId, scope, UrlUtils.encode(CommonUtils.getOutsideUrl(ConfigurationUtils.getConfiguration(Constants.SERVICE_NAME), "weiXin", "authorizeCallback") + "?" + WebUtils.buildQueryString(queryParams)), state, componentAppId);
+            viewName = "redirect:" + WeiXinUtils.generateAuthorizeUrl(appId, scope, UrlUtils.encode(CommonUtils.getOutsideUrl(ConfigurationUtils.getConfiguration(ConfigurationKeys.SERVICE_NAME), "weiXin", "authorizeCallback") + "?" + WebUtils.buildQueryString(queryParams)), state, componentAppId);
         }
         return viewName;
     }

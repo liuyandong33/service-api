@@ -2,6 +2,7 @@ package build.dream.api.utils;
 
 import build.dream.api.constants.Constants;
 import build.dream.common.api.ApiRest;
+import build.dream.common.constants.ConfigurationKeys;
 import build.dream.common.constants.ErrorConstants;
 import build.dream.common.exceptions.CustomException;
 import build.dream.common.exceptions.Error;
@@ -10,7 +11,7 @@ import build.dream.common.utils.SignatureUtils;
 import org.apache.commons.codec.binary.Base64;
 
 public class ApiUtils {
-    private static final String PLATFORM_PRIVATE_KEY = ConfigurationUtils.getConfiguration(Constants.PLATFORM_PRIVATE_KEY);
+    private static final String PLATFORM_PRIVATE_KEY = ConfigurationUtils.getConfiguration(ConfigurationKeys.PLATFORM_PRIVATE_KEY);
 
     /**
      * 转换异常

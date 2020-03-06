@@ -4,6 +4,7 @@ import build.dream.api.configurations.SyncDataConfiguration;
 import build.dream.api.constants.Constants;
 import build.dream.api.domains.BaseDomain;
 import build.dream.common.api.ApiRest;
+import build.dream.common.constants.ConfigurationKeys;
 import build.dream.common.domains.saas.TenantSecretKey;
 import build.dream.common.mappers.CommonMapper;
 import build.dream.common.mappers.UniversalMapper;
@@ -33,7 +34,7 @@ import java.util.*;
 @Controller
 @RequestMapping(value = "/demo")
 public class DemoController {
-    public static final String PLATFORM_PUBLIC_KEY = ConfigurationUtils.getConfiguration(Constants.PLATFORM_PUBLIC_KEY);
+    public static final String PLATFORM_PUBLIC_KEY = ConfigurationUtils.getConfiguration(ConfigurationKeys.PLATFORM_PUBLIC_KEY);
 
     static {
         try {

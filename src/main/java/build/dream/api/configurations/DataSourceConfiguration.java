@@ -1,20 +1,24 @@
 package build.dream.api.configurations;
 
-import com.alibaba.druid.pool.DruidDataSource;
+import com.zaxxer.hikari.HikariDataSource;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.jdbc.DataSourceBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Primary;
 
 import javax.sql.DataSource;
 
 @Configuration
 public class DataSourceConfiguration {
-    @Bean(name = "dataSource")
-    @Primary
-    @ConfigurationProperties(prefix = "datasource")
-    public DataSource dataSource() {
+    /*@Bean
+    @ConfigurationProperties(prefix = "datasource.druid")
+    public DataSource druidDataSource() {
         return DataSourceBuilder.create().type(DruidDataSource.class).build();
+    }*/
+
+    @Bean
+    @ConfigurationProperties(prefix = "datasource.hikari")
+    public DataSource hikariDataSource() {
+        return DataSourceBuilder.create().type(HikariDataSource.class).build();
     }
 }

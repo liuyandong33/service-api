@@ -4,6 +4,7 @@ import build.dream.api.constants.Constants;
 import build.dream.api.models.lightapp.V1Model;
 import build.dream.api.utils.ApiUtils;
 import build.dream.common.api.ApiRest;
+import build.dream.common.constants.ConfigurationKeys;
 import build.dream.common.constants.ErrorConstants;
 import build.dream.common.utils.*;
 import org.apache.commons.codec.binary.Base64;
@@ -20,7 +21,7 @@ import java.util.Map;
 @Controller
 @RequestMapping(value = "/lightApp")
 public class LightAppController {
-    private static final String PLATFORM_PRIVATE_KEY = ConfigurationUtils.getConfiguration(Constants.PLATFORM_PRIVATE_KEY);
+    private static final String PLATFORM_PRIVATE_KEY = ConfigurationUtils.getConfiguration(ConfigurationKeys.PLATFORM_PRIVATE_KEY);
 
     @RequestMapping(value = "/v1", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     @ResponseBody

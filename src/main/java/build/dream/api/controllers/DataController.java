@@ -5,6 +5,7 @@ import build.dream.api.models.data.UploadDataBodyModel;
 import build.dream.api.models.data.UploadDataModel;
 import build.dream.api.utils.ApiUtils;
 import build.dream.common.api.ApiRest;
+import build.dream.common.constants.ConfigurationKeys;
 import build.dream.common.constants.ErrorConstants;
 import build.dream.common.utils.*;
 import com.aliyun.openservices.ons.api.Message;
@@ -19,7 +20,7 @@ import java.util.Map;
 @Controller
 @RequestMapping(value = "/data")
 public class DataController {
-    private static final String PLATFORM_PRIVATE_KEY = ConfigurationUtils.getConfiguration(Constants.PLATFORM_PRIVATE_KEY);
+    private static final String PLATFORM_PRIVATE_KEY = ConfigurationUtils.getConfiguration(ConfigurationKeys.PLATFORM_PRIVATE_KEY);
 
     @RequestMapping(value = "/uploadData", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     @ResponseBody

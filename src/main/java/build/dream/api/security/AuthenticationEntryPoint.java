@@ -1,7 +1,7 @@
 package build.dream.api.security;
 
-import build.dream.api.constants.Constants;
 import build.dream.common.api.ApiRest;
+import build.dream.common.constants.ConfigurationKeys;
 import build.dream.common.constants.ErrorConstants;
 import build.dream.common.exceptions.Error;
 import build.dream.common.utils.ConfigurationUtils;
@@ -21,7 +21,7 @@ import java.io.IOException;
 
 @Component
 public class AuthenticationEntryPoint implements org.springframework.security.web.AuthenticationEntryPoint {
-    private static final String PLATFORM_PRIVATE_KEY = ConfigurationUtils.getConfiguration(Constants.PLATFORM_PRIVATE_KEY);
+    private static final String PLATFORM_PRIVATE_KEY = ConfigurationUtils.getConfiguration(ConfigurationKeys.PLATFORM_PRIVATE_KEY);
     private ThrowableAnalyzer throwableAnalyzer = new DefaultThrowableAnalyzer();
 
     @Override

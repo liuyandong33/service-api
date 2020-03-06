@@ -4,6 +4,7 @@ import build.dream.api.constants.Constants;
 import build.dream.api.models.api.V1Model;
 import build.dream.api.utils.ApiUtils;
 import build.dream.common.api.ApiRest;
+import build.dream.common.constants.ConfigurationKeys;
 import build.dream.common.constants.ErrorConstants;
 import build.dream.common.utils.*;
 import org.springframework.http.MediaType;
@@ -18,7 +19,7 @@ import java.util.Map;
 @Controller
 @RequestMapping(value = "/api")
 public class ApiController {
-    private static final String PLATFORM_PRIVATE_KEY = ConfigurationUtils.getConfiguration(Constants.PLATFORM_PRIVATE_KEY);
+    private static final String PLATFORM_PRIVATE_KEY = ConfigurationUtils.getConfiguration(ConfigurationKeys.PLATFORM_PRIVATE_KEY);
 
     @RequestMapping(value = "/v1", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     @ResponseBody
