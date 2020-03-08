@@ -124,6 +124,11 @@ public class ResourceServerConfiguration extends ResourceServerConfigurerAdapter
         if (Constants.SERVICE_NAME_WEBAPI.equals(serviceName)) {
             return buildBackgroundPrivilegeMap();
         }
+
+        if (Constants.SERVICE_NAME_O2OAPI.equals(serviceName)) {
+            return new LinkedHashMap<RequestMatcher, Collection<ConfigAttribute>>();
+        }
+
         return null;
     }
 
