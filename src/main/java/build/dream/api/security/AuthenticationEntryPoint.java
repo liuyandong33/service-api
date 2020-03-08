@@ -5,7 +5,7 @@ import build.dream.common.constants.ConfigurationKeys;
 import build.dream.common.constants.ErrorConstants;
 import build.dream.common.exceptions.Error;
 import build.dream.common.utils.ConfigurationUtils;
-import build.dream.common.utils.GsonUtils;
+import build.dream.common.utils.JacksonUtils;
 import build.dream.common.utils.ObjectUtils;
 import org.springframework.http.MediaType;
 import org.springframework.security.access.AccessDeniedException;
@@ -38,7 +38,7 @@ public class AuthenticationEntryPoint implements org.springframework.security.we
                 .successful(true)
                 .build();
         apiRest.sign(PLATFORM_PRIVATE_KEY);
-        return GsonUtils.toJson(apiRest);
+        return JacksonUtils.writeValueAsString(apiRest);
     }
 
     public String translateErrorCode(String errorCode) {

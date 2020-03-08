@@ -3,7 +3,7 @@ package build.dream.api.security;
 import build.dream.common.api.ApiRest;
 import build.dream.common.constants.ErrorConstants;
 import build.dream.common.exceptions.Error;
-import build.dream.common.utils.GsonUtils;
+import build.dream.common.utils.JacksonUtils;
 import org.springframework.http.MediaType;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Component;
@@ -21,6 +21,6 @@ public class AccessDeniedHandler implements org.springframework.security.web.acc
                 .successful(false)
                 .build();
         response.setContentType(MediaType.APPLICATION_JSON_UTF8_VALUE);
-        response.getWriter().write(GsonUtils.toJson(apiRest));
+        response.getWriter().write(JacksonUtils.writeValueAsString(apiRest));
     }
 }

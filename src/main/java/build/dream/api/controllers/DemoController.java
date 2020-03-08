@@ -94,7 +94,7 @@ public class DemoController {
         sqlSession.close();
         connection.close();
 
-        return GsonUtils.toJson(ApiRest.builder().message("处理成功！").successful(true).build());
+        return JacksonUtils.writeValueAsString(ApiRest.builder().message("处理成功！").successful(true).build());
     }
 
     @RequestMapping(value = "/sign")
