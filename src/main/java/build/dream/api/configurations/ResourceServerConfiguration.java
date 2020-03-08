@@ -7,6 +7,7 @@ import build.dream.api.security.ApiFilterInvocationSecurityMetadataSource;
 import build.dream.api.services.PrivilegeService;
 import build.dream.common.domains.saas.AppPrivilege;
 import build.dream.common.domains.saas.BackgroundPrivilege;
+import build.dream.common.domains.saas.DevOpsPrivilege;
 import build.dream.common.domains.saas.PosPrivilege;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -114,6 +115,11 @@ public class ResourceServerConfiguration extends ResourceServerConfigurerAdapter
 
     private LinkedHashMap<RequestMatcher, Collection<ConfigAttribute>> buildDevOpsPrivilegeMap() {
         LinkedHashMap<RequestMatcher, Collection<ConfigAttribute>> devOpsPrivilegeMap = new LinkedHashMap<RequestMatcher, Collection<ConfigAttribute>>();
+        List<DevOpsPrivilege> devOpsPrivileges = privilegeService.obtainDevOpsPrivileges();
+        for (DevOpsPrivilege devOpsPrivilege : devOpsPrivileges) {
+            String method = devOpsPrivilege.getServiceName() + "." + devOpsPrivilege.getControllerName() + "." + devOpsPrivilege.getActionName();
+            devOpsPrivilegeMap.put(buildMethodRequestMatcher(method), buildHasAuthorityConfigAttributes(method));
+        }
         return devOpsPrivilegeMap;
     }
 

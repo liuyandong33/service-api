@@ -2,6 +2,7 @@ package build.dream.api.services;
 
 import build.dream.common.domains.saas.AppPrivilege;
 import build.dream.common.domains.saas.BackgroundPrivilege;
+import build.dream.common.domains.saas.DevOpsPrivilege;
 import build.dream.common.domains.saas.PosPrivilege;
 import build.dream.common.utils.DatabaseHelper;
 import build.dream.common.utils.SearchModel;
@@ -49,5 +50,18 @@ public class PrivilegeService {
                 .autoSetDeletedFalse()
                 .build();
         return DatabaseHelper.findAll(BackgroundPrivilege.class, searchModel);
+    }
+
+    /**
+     * 获取所有运维平台权限
+     *
+     * @return
+     */
+    @Transactional(readOnly = true)
+    public List<DevOpsPrivilege> obtainDevOpsPrivileges() {
+        SearchModel searchModel = SearchModel.builder()
+                .autoSetDeletedFalse()
+                .build();
+        return DatabaseHelper.findAll(DevOpsPrivilege.class, searchModel);
     }
 }
