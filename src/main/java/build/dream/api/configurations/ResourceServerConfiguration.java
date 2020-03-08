@@ -5,10 +5,7 @@ import build.dream.api.matchers.MethodRequestMatcher;
 import build.dream.api.security.AccessDeniedHandler;
 import build.dream.api.security.ApiFilterInvocationSecurityMetadataSource;
 import build.dream.api.services.PrivilegeService;
-import build.dream.common.domains.saas.AppPrivilege;
-import build.dream.common.domains.saas.BackgroundPrivilege;
-import build.dream.common.domains.saas.DevOpsPrivilege;
-import build.dream.common.domains.saas.PosPrivilege;
+import build.dream.common.domains.saas.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -123,6 +120,16 @@ public class ResourceServerConfiguration extends ResourceServerConfigurerAdapter
         return devOpsPrivilegeMap;
     }
 
+    private LinkedHashMap<RequestMatcher, Collection<ConfigAttribute>> buildOpPrivilegeMap() {
+        LinkedHashMap<RequestMatcher, Collection<ConfigAttribute>> opPrivilegeMap = new LinkedHashMap<RequestMatcher, Collection<ConfigAttribute>>();
+        List<OpPrivilege> opPrivileges = privilegeService.obtainAllOpPrivileges();
+        for (OpPrivilege opPrivilege : opPrivileges) {
+            String method = opPrivilege.getServiceName() + "." + opPrivilege.getControllerName() + "." + opPrivilege.getActionName();
+            opPrivilegeMap.put(buildMethodRequestMatcher(method), buildHasAuthorityConfigAttributes(method));
+        }
+        return opPrivilegeMap;
+    }
+
     private LinkedHashMap<RequestMatcher, Collection<ConfigAttribute>> buildPrivilegeMap() {
         if (Constants.SERVICE_NAME_POSAPI.equals(serviceName)) {
             return buildPosPrivilegeMap();
@@ -145,7 +152,7 @@ public class ResourceServerConfiguration extends ResourceServerConfigurerAdapter
         }
 
         if (Constants.SERVICE_NAME_OP_API.equals(serviceName)) {
-            return new LinkedHashMap<RequestMatcher, Collection<ConfigAttribute>>();
+            return buildOpPrivilegeMap();
         }
 
         if (Constants.SERVICE_NAME_DEV_OPS_API.equals(serviceName)) {
