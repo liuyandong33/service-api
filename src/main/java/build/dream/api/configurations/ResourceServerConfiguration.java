@@ -112,6 +112,11 @@ public class ResourceServerConfiguration extends ResourceServerConfigurerAdapter
         return appPrivilegeMap;
     }
 
+    private LinkedHashMap<RequestMatcher, Collection<ConfigAttribute>> buildDevOpsPrivilegeMap() {
+        LinkedHashMap<RequestMatcher, Collection<ConfigAttribute>> devOpsPrivilegeMap = new LinkedHashMap<RequestMatcher, Collection<ConfigAttribute>>();
+        return devOpsPrivilegeMap;
+    }
+
     private LinkedHashMap<RequestMatcher, Collection<ConfigAttribute>> buildPrivilegeMap() {
         if (Constants.SERVICE_NAME_POSAPI.equals(serviceName)) {
             return buildPosPrivilegeMap();
@@ -127,6 +132,18 @@ public class ResourceServerConfiguration extends ResourceServerConfigurerAdapter
 
         if (Constants.SERVICE_NAME_O2OAPI.equals(serviceName)) {
             return new LinkedHashMap<RequestMatcher, Collection<ConfigAttribute>>();
+        }
+
+        if (Constants.SERVICE_NAME_AGENT_API.equals(serviceName)) {
+            return new LinkedHashMap<RequestMatcher, Collection<ConfigAttribute>>();
+        }
+
+        if (Constants.SERVICE_NAME_OP_API.equals(serviceName)) {
+            return new LinkedHashMap<RequestMatcher, Collection<ConfigAttribute>>();
+        }
+
+        if (Constants.SERVICE_NAME_DEV_OPS_API.equals(serviceName)) {
+            return buildDevOpsPrivilegeMap();
         }
 
         return null;
