@@ -110,9 +110,8 @@ public class ApiController {
             queryParams.put("id", opV1Model.getId());
 
             Tuple3<String, String, String> tuple3 = ApiUtils.parseMethod(opV1Model.getMethod());
-            String partitionCode = TenantUtils.obtainPartitionCode();
             requestBody = ApplicationHandler.getRequestBody(httpServletRequest, Constants.CHARSET_NAME_UTF_8);
-            apiRest = ProxyUtils.doPostWithJsonRequestBody(partitionCode, tuple3._1(), tuple3._2(), tuple3._3(), queryParams, requestBody);
+            apiRest = ProxyUtils.doPostWithJsonRequestBody(tuple3._1(), tuple3._2(), tuple3._3(), queryParams, requestBody);
             ValidateUtils.isTrue(apiRest.isSuccessful(), apiRest.getError());
         } catch (Exception e) {
             apiRest = ApiUtils.transformException(e);
@@ -145,9 +144,8 @@ public class ApiController {
             queryParams.put("id", devOpsV1Model.getId());
 
             Tuple3<String, String, String> tuple3 = ApiUtils.parseMethod(devOpsV1Model.getMethod());
-            String partitionCode = TenantUtils.obtainPartitionCode();
             requestBody = ApplicationHandler.getRequestBody(httpServletRequest, Constants.CHARSET_NAME_UTF_8);
-            apiRest = ProxyUtils.doPostWithJsonRequestBody(partitionCode, tuple3._1(), tuple3._2(), tuple3._3(), queryParams, requestBody);
+            apiRest = ProxyUtils.doPostWithJsonRequestBody(tuple3._1(), tuple3._2(), tuple3._3(), queryParams, requestBody);
             ValidateUtils.isTrue(apiRest.isSuccessful(), apiRest.getError());
         } catch (Exception e) {
             apiRest = ApiUtils.transformException(e);
