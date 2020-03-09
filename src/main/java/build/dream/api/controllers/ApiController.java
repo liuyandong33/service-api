@@ -53,6 +53,39 @@ public class ApiController {
         return JacksonUtils.writeValueAsString(apiRest, Constants.DEFAULT_DATE_PATTERN);
     }
 
+    @RequestMapping(value = "/v2", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    @ResponseBody
+    public String v2(HttpServletRequest httpServletRequest) {
+        ApiRest apiRest = null;
+        Map<String, String> requestParameters = ApplicationHandler.getRequestParameters(httpServletRequest);
+        String requestBody = null;
+        try {
+            ApiUtils.validateRequestMethod(httpServletRequest);
+            ApiUtils.validateContentType(httpServletRequest);
+            V2Model v2Model = ApplicationHandler.instantiateObject(V2Model.class, requestParameters);
+            v2Model.validateAndThrow();
+
+            requestBody = ApplicationHandler.getRequestBody(httpServletRequest, Constants.CHARSET_NAME_UTF_8);
+            ApiUtils.verifySign(v2Model.toString() + requestBody, v2Model.getSignature(), TenantUtils.obtainPrivateKey(), TenantUtils.obtainPublicKey());
+
+            Map<String, String> queryParams = new HashMap<String, String>();
+            queryParams.put("access_token", v2Model.getAccessToken());
+            queryParams.put("timestamp", requestParameters.get("timestamp"));
+            queryParams.put("id", v2Model.getId());
+
+            Tuple3<String, String, String> tuple3 = ApiUtils.parseMethod(v2Model.getMethod());
+            String partitionCode = TenantUtils.obtainPartitionCode();
+            apiRest = ProxyUtils.doPostWithJsonRequestBody(partitionCode, tuple3._1(), tuple3._2(), tuple3._3(), queryParams, requestBody);
+            ValidateUtils.isTrue(apiRest.isSuccessful(), apiRest.getError());
+
+            apiRest.sign(PLATFORM_PRIVATE_KEY, Constants.DEFAULT_DATE_PATTERN);
+        } catch (Exception e) {
+            apiRest = ApiUtils.transformException(e);
+            LogUtils.error("处理失败", this.getClass().getName(), "v2", e, requestParameters, requestBody);
+        }
+        return JacksonUtils.writeValueAsString(apiRest, Constants.DEFAULT_DATE_PATTERN);
+    }
+
     /**
      * 运营系统api
      *
@@ -119,39 +152,6 @@ public class ApiController {
         } catch (Exception e) {
             apiRest = ApiUtils.transformException(e);
             LogUtils.error("处理失败", this.getClass().getName(), "devOpsV1", e, requestParameters, requestBody);
-        }
-        return JacksonUtils.writeValueAsString(apiRest, Constants.DEFAULT_DATE_PATTERN);
-    }
-
-    @RequestMapping(value = "/v2", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-    @ResponseBody
-    public String v2(HttpServletRequest httpServletRequest) {
-        ApiRest apiRest = null;
-        Map<String, String> requestParameters = ApplicationHandler.getRequestParameters(httpServletRequest);
-        String requestBody = null;
-        try {
-            ApiUtils.validateRequestMethod(httpServletRequest);
-            ApiUtils.validateContentType(httpServletRequest);
-            V2Model v2Model = ApplicationHandler.instantiateObject(V2Model.class, requestParameters);
-            v2Model.validateAndThrow();
-
-            requestBody = ApplicationHandler.getRequestBody(httpServletRequest, Constants.CHARSET_NAME_UTF_8);
-            ApiUtils.verifySign(v2Model.toString() + requestBody, v2Model.getSignature(), TenantUtils.obtainPrivateKey(), TenantUtils.obtainPublicKey());
-
-            Map<String, String> queryParams = new HashMap<String, String>();
-            queryParams.put("access_token", v2Model.getAccessToken());
-            queryParams.put("timestamp", requestParameters.get("timestamp"));
-            queryParams.put("id", v2Model.getId());
-
-            Tuple3<String, String, String> tuple3 = ApiUtils.parseMethod(v2Model.getMethod());
-            String partitionCode = TenantUtils.obtainPartitionCode();
-            apiRest = ProxyUtils.doPostWithJsonRequestBody(partitionCode, tuple3._1(), tuple3._2(), tuple3._3(), queryParams, requestBody);
-            ValidateUtils.isTrue(apiRest.isSuccessful(), apiRest.getError());
-
-            apiRest.sign(PLATFORM_PRIVATE_KEY, Constants.DEFAULT_DATE_PATTERN);
-        } catch (Exception e) {
-            apiRest = ApiUtils.transformException(e);
-            LogUtils.error("处理失败", this.getClass().getName(), "v2", e, requestParameters, requestBody);
         }
         return JacksonUtils.writeValueAsString(apiRest, Constants.DEFAULT_DATE_PATTERN);
     }
