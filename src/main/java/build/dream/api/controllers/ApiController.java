@@ -1,6 +1,8 @@
 package build.dream.api.controllers;
 
 import build.dream.api.constants.Constants;
+import build.dream.api.models.api.DevOpsV1Model;
+import build.dream.api.models.api.OpV1Model;
 import build.dream.api.models.api.V1Model;
 import build.dream.api.models.api.V2Model;
 import build.dream.api.utils.ApiUtils;
@@ -47,6 +49,76 @@ public class ApiController {
         } catch (Exception e) {
             apiRest = ApiUtils.transformException(e);
             LogUtils.error("处理失败", this.getClass().getName(), "v1", e, requestParameters, requestBody);
+        }
+        return JacksonUtils.writeValueAsString(apiRest, Constants.DEFAULT_DATE_PATTERN);
+    }
+
+    /**
+     * 运营系统api
+     *
+     * @param httpServletRequest
+     * @return
+     */
+    @RequestMapping(value = "/opV1", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    @ResponseBody
+    public String opV1(HttpServletRequest httpServletRequest) {
+        ApiRest apiRest = null;
+        Map<String, String> requestParameters = ApplicationHandler.getRequestParameters(httpServletRequest);
+        String requestBody = null;
+        try {
+            ApiUtils.validateRequestMethod(httpServletRequest);
+            ApiUtils.validateContentType(httpServletRequest);
+            OpV1Model opV1Model = ApplicationHandler.instantiateObject(OpV1Model.class, requestParameters);
+            opV1Model.validateAndThrow();
+
+            Map<String, String> queryParams = new HashMap<String, String>();
+            queryParams.put("access_token", opV1Model.getAccessToken());
+            queryParams.put("timestamp", requestParameters.get("timestamp"));
+            queryParams.put("id", opV1Model.getId());
+
+            Tuple3<String, String, String> tuple3 = ApiUtils.parseMethod(opV1Model.getMethod());
+            String partitionCode = TenantUtils.obtainPartitionCode();
+            requestBody = ApplicationHandler.getRequestBody(httpServletRequest, Constants.CHARSET_NAME_UTF_8);
+            apiRest = ProxyUtils.doPostWithJsonRequestBody(partitionCode, tuple3._1(), tuple3._2(), tuple3._3(), queryParams, requestBody);
+            ValidateUtils.isTrue(apiRest.isSuccessful(), apiRest.getError());
+        } catch (Exception e) {
+            apiRest = ApiUtils.transformException(e);
+            LogUtils.error("处理失败", this.getClass().getName(), "opV1", e, requestParameters, requestBody);
+        }
+        return JacksonUtils.writeValueAsString(apiRest, Constants.DEFAULT_DATE_PATTERN);
+    }
+
+    /**
+     * 运维系统api
+     *
+     * @param httpServletRequest
+     * @return
+     */
+    @RequestMapping(value = "/devOpsV1", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    @ResponseBody
+    public String devOpsV1(HttpServletRequest httpServletRequest) {
+        ApiRest apiRest = null;
+        Map<String, String> requestParameters = ApplicationHandler.getRequestParameters(httpServletRequest);
+        String requestBody = null;
+        try {
+            ApiUtils.validateRequestMethod(httpServletRequest);
+            ApiUtils.validateContentType(httpServletRequest);
+            DevOpsV1Model devOpsV1Model = ApplicationHandler.instantiateObject(DevOpsV1Model.class, requestParameters);
+            devOpsV1Model.validateAndThrow();
+
+            Map<String, String> queryParams = new HashMap<String, String>();
+            queryParams.put("access_token", devOpsV1Model.getAccessToken());
+            queryParams.put("timestamp", requestParameters.get("timestamp"));
+            queryParams.put("id", devOpsV1Model.getId());
+
+            Tuple3<String, String, String> tuple3 = ApiUtils.parseMethod(devOpsV1Model.getMethod());
+            String partitionCode = TenantUtils.obtainPartitionCode();
+            requestBody = ApplicationHandler.getRequestBody(httpServletRequest, Constants.CHARSET_NAME_UTF_8);
+            apiRest = ProxyUtils.doPostWithJsonRequestBody(partitionCode, tuple3._1(), tuple3._2(), tuple3._3(), queryParams, requestBody);
+            ValidateUtils.isTrue(apiRest.isSuccessful(), apiRest.getError());
+        } catch (Exception e) {
+            apiRest = ApiUtils.transformException(e);
+            LogUtils.error("处理失败", this.getClass().getName(), "devOpsV1", e, requestParameters, requestBody);
         }
         return JacksonUtils.writeValueAsString(apiRest, Constants.DEFAULT_DATE_PATTERN);
     }
