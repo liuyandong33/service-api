@@ -45,7 +45,7 @@ public class ResourceServerConfiguration extends ResourceServerConfigurerAdapter
 
     @Override
     public void configure(ResourceServerSecurityConfigurer resources) {
-        resources.resourceId("api");
+        resources.resourceId(serviceName);
         resources.tokenStore(tokenStore());
         resources.authenticationEntryPoint(authenticationEntryPoint);
         resources.accessDeniedHandler(accessDeniedHandler);
