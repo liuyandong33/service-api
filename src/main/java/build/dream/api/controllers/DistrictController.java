@@ -42,7 +42,7 @@ public class DistrictController {
     }
 
     /**
-     * 初始化数据，比较耗时，只有第一此或数据有变动时使用
+     * 初始化数据，比较耗时，只有第一次或数据有变动时使用
      *
      * @return
      */
