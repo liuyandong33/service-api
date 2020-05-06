@@ -26,9 +26,9 @@ public class MethodRequestMatcher implements RequestMatcher {
     @Override
     public boolean matches(HttpServletRequest request) {
         String methodInParameter = request.getParameter("method");
-        if (StringUtils.isNotBlank(methodInParameter)) {
-            return methodInParameter.equals(method);
+        if (StringUtils.isBlank(methodInParameter)) {
+            return false;
         }
-        return false;
+        return methodInParameter.equals(method);
     }
 }
